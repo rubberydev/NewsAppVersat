@@ -19,7 +19,8 @@
             Margin="35"
             Text="listar rss news"
             TextColor="White"
-            BackgroundColor="Blue"/>
+            BackgroundColor="Blue"
+            Command="{Binding ListRssNewsCommand}"/>
         <Button
             Margin="35"
             Text="listar rss news guardadas"

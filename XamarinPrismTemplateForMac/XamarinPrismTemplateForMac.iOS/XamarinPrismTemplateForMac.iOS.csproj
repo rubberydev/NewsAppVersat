@@ -136,4 +136,7 @@
       <Name>XamarinPrismTemplateForMac</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\news_icon.jpeg" />
+  </ItemGroup>
 </Project>

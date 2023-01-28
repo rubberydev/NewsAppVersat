@@ -4,6 +4,7 @@
              x:Class="XamarinPrismTemplateForMac.App"
              xmlns:prism='clr-namespace:Prism.Unity;assembly=Prism.Unity.Forms'>
     <Application.Resources>
-
+        <x:String x:Key="ChannelId">UC_lEiu6917IJz03TnntWUaQ</x:String>
+        <x:String x:Key="UrlBase">https://www.youtube.com/feeds/videos.xml?channel_id=</x:String>
     </Application.Resources>
 </prism:PrismApplication>
