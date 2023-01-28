@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using Prism.Unity;
 using Xamarin.Forms;
+using XamarinPrismTemplateForMac.Services;
 using XamarinPrismTemplateForMac.ViewModels;
 
 namespace XamarinPrismTemplateForMac
@@ -19,6 +20,8 @@ namespace XamarinPrismTemplateForMac
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            //Services
+            containerRegistry.Register<IDbService, DbService>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();

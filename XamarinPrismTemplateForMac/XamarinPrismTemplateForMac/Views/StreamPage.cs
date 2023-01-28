@@ -26,6 +26,8 @@ namespace XamarinPrismTemplateForMac.Views
             _listView.ItemSelected += listView_ItemSelected;
             _listView.SelectedItem = null;
 
+            
+
             // Default values to display if the feeds aren't loading
             var label = new Label();
             var stack = new StackLayout()
@@ -55,7 +57,7 @@ namespace XamarinPrismTemplateForMac.Views
             Content = _listView;
         }
 
-        private async void listView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        /*private async void listView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             // To prevent opening multiple pages on double tapping
             _listView.IsEnabled = false;
@@ -63,7 +65,7 @@ namespace XamarinPrismTemplateForMac.Views
             await Navigation.PushAsync(new StreamDetailPage(item));
 
             _listView.IsEnabled = true;
-        }
+        }*/
         #endregion Private Functions & Event Handlers
 
         #region LifeCycle Event Overrides
