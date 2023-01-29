@@ -27,7 +27,6 @@
     <None Remove="DbModels\" />
     <None Remove="sqlite-net-pcl" />
     <None Remove="Services\" />
-    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -36,6 +35,5 @@
     <Folder Include="Resources\" />
     <Folder Include="DbModels\" />
     <Folder Include="Services\" />
-    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,6 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using XamarinPrismTemplateForMac.DbModels;
-using XamarinPrismTemplateForMac.Helpers;
 using XamarinPrismTemplateForMac.Models;
 using XamarinPrismTemplateForMac.Services;
 

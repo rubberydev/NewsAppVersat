@@ -1,7 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using XamarinPrismTemplateForMac.Helpers;
 using XamarinPrismTemplateForMac.Models;
 
 namespace XamarinPrismTemplateForMac.Views
@@ -9,8 +8,6 @@ namespace XamarinPrismTemplateForMac.Views
     public class StreamDetailPage : ContentPage
     {
         RSSFeedObject _rssFeedObject;
-
-        SingletonGlobalVariables singletonGlobalVariables;
 
 
         public StreamDetailPage(RSSFeedObject feedObject)
