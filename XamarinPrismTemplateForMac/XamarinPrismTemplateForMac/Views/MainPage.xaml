@@ -16,22 +16,25 @@
             Margin="35"
             Text="versat test in VS 2022 ;)"/>
         <Button
+            CornerRadius="20"
             Margin="35"
             Text="listar noticias rss"
             TextColor="White"
             BackgroundColor="Blue"
             Command="{Binding ListRssNewsCommand}"/>
         <Button
+            CornerRadius="20"
             Margin="35"
             Text="listar rss noticias guardadas"
             TextColor="White"
             BackgroundColor="Red"
             Command="{Binding ListLocalNewsCommand}"/>
         <Button
+            CornerRadius="20"
             Margin="35"
             Text="Borrar noticias guardadas"
             TextColor="White"
-            BackgroundColor="LightBlue"
+            BackgroundColor="Orange"
             Command="{Binding ClearAllLocalNewsCommand}"/>
 
     </StackLayout>
