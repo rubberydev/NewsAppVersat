@@ -15,6 +15,8 @@ namespace XamarinPrismTemplateForMac.Models
 
         private bool isVisibleLegendToSaveNews;
 
+        DbService dbService;
+
         public CustomCell()
         {
             this.singletonGlobalVariables = SingletonGlobalVariables.GetInstance();
@@ -33,44 +35,76 @@ namespace XamarinPrismTemplateForMac.Models
             verticalStack.Children.Add(youTubeFeed);
             verticalStack.Children.Add(youTubeFeed2);
 
-            var label_action = new Label()
-            {
-                Text = "toca dos veces para verla despues...",
-                LineBreakMode = LineBreakMode.WordWrap,
-                FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label)),
-                IsVisible = this.isVisibleLegendToSaveNews
-            };
 
-            verticalStack.Children.Add(label_action);
-            var tapGestureRecognizer_to_view_detail = new TapGestureRecognizer();
-            tapGestureRecognizer_to_view_detail.NumberOfTapsRequired = 1;
-            tapGestureRecognizer_to_view_detail.Tapped += async (s, e) =>
+            var tapGestureRecognizer_to_view_detail_or_save = new TapGestureRecognizer();
+
+            tapGestureRecognizer_to_view_detail_or_save.Tapped += async (s, e) =>
             {
-                if (this.singletonGlobalVariables.NavigatedFromSavedNewsOption)
+                var rss_feed_object = s as StackLayout;
+                RSSFeedObject bindingContext = (RSSFeedObject)rss_feed_object.BindingContext;
+                string userAction = string.Empty;
+                if (!singletonGlobalVariables.NavigatedFromSavedNewsOption)
                 {
-                    var current = Connectivity.NetworkAccess;
-                    string optionSelected = string.Empty;
-                    if (current == NetworkAccess.None)
-                    {
-                        optionSelected = await Xamarin.Forms.Application.Current.MainPage.DisplayActionSheet("Error de red", "Recargar!", "Cancelar!", "Señor usuario si desea continuar y ver la noticia habillite la conexion a internet y luego seleccione la acción Recargar!");
-                    }
+                   userAction = await Xamarin.Forms.Application.Current.MainPage.DisplayActionSheet("Error de red", "Guardar!", "Ver noticia!", "Señor usuario que accion desea ejecutar, seleccione(Ver noticia!para ver ahora mismo)(Guardar! para verla posteriormente) !");
 
-                    if (optionSelected == "Recargar!")
-                    {
-                        Xamarin.Forms.Application.Current.MainPage = new Xamarin.Forms.NavigationPage(new StreamPage(false))
-                        {
-                            BarTextColor = Color.FromRgb(255, 255, 255),
-                            BarBackgroundColor = Color.FromRgb(255, 87, 51)
-                        };
-                    }
-                    else if (optionSelected == "Cancelar!" || string.IsNullOrEmpty(optionSelected))
-                        return;
-
-                    var rss_feed_object = s as StackLayout;
-                    RSSFeedObject bindingContext = (RSSFeedObject)rss_feed_object.BindingContext;
-                    await Application.Current.MainPage.Navigation.PushAsync(new StreamDetailPage(bindingContext));
                 }
+
+                if (!string.IsNullOrEmpty(userAction) && userAction == "Ver noticia!")
+                {
+
+                    if (this.singletonGlobalVariables.NavigatedFromSavedNewsOption)
+                    {
+                        var current = Connectivity.NetworkAccess;
+                        string optionSelected = string.Empty;
+                        if (current != NetworkAccess.Internet)
+                        {
+                            optionSelected = await Xamarin.Forms.Application.Current.MainPage.DisplayActionSheet("Error de red", "Recargar!", "Cancelar!", "Señor usuario si desea continuar y ver la noticia habillite la conexion a internet y luego seleccione la acción Recargar!");
+                        }
+
+                        if (optionSelected == "Recargar!")
+                        {
+                            Xamarin.Forms.Application.Current.MainPage = new Xamarin.Forms.NavigationPage(new StreamPage(false))
+                            {
+                                BarTextColor = Color.FromRgb(255, 255, 255),
+                                BarBackgroundColor = Color.FromRgb(255, 87, 51)
+                            };
+                        }
+                        else if (optionSelected == "Cancelar!" || string.IsNullOrEmpty(optionSelected))
+                            return;
+
+                    
+                    }
+
+                await Application.Current.MainPage.Navigation.PushAsync(new StreamDetailPage(bindingContext));
+
+                }
+                else if(!string.IsNullOrEmpty(userAction) && userAction == "Guardar!")
+                {
+                    RSSNewsDbModel rss_feed_to_save = new RSSNewsDbModel();
+                    rss_feed_to_save.Title = bindingContext.Title;
+                    rss_feed_to_save.Date = bindingContext.Date;
+                    rss_feed_to_save.Link = bindingContext.Link;
+                    try
+                    {
+                        this.dbService = new DbService();
+                        await this.dbService.InsertNewsAsync(rss_feed_to_save);
+                        await Application.Current.MainPage.DisplayAlert("!!", "noticia guardada exitosamente", "Aceptar");
+                    }
+                    catch (Exception ex)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("ERROR", $"La noticia no pudo ser guardada: {ex.Message} ", "Aceptar");
+
+                    }
+                }
+                else
+                {
+                    await Application.Current.MainPage.Navigation.PushAsync(new StreamDetailPage(bindingContext));
+
+                }
+
+
             };
+
                 var image_channel = new Image()
                 {
                     Source = "news_icon.jpeg",
@@ -78,44 +112,7 @@ namespace XamarinPrismTemplateForMac.Models
                     MinimumWidthRequest = 70
                 };
 
-
-                var tapGestureRecognizer_to_save_new = new TapGestureRecognizer();
-                //avoid double tap when user list local news
-                if (!singletonGlobalVariables.NavigatedFromSavedNewsOption)
-                {
-                    tapGestureRecognizer_to_save_new.NumberOfTapsRequired = 2;
-
-
-
-                    tapGestureRecognizer_to_save_new.Tapped += async (s, e) => {
-                        // save news
-
-                        var response = await Application.Current.MainPage.DisplayAlert("!!", "Esta seguro que quiere guardar esta noticia para verla despues?", "Si", "No");
-
-                        if (!response) return;
-
-                        DbService dbService = new DbService();
-                        var news_to_save = s as StackLayout;
-                        RSSFeedObject rssFeedObject = (RSSFeedObject)news_to_save.BindingContext;
-                        RSSNewsDbModel rss_feed_to_save = new RSSNewsDbModel();
-                        rss_feed_to_save.Title = rssFeedObject.Title;
-                        rss_feed_to_save.Date = rssFeedObject.Date;
-                        rss_feed_to_save.Link = rssFeedObject.Link;
-                        try
-                        {
-                            await dbService.InsertNewsAsync(rss_feed_to_save);
-                            await Application.Current.MainPage.DisplayAlert("!!", "noticia guardada exitosamente", "Aceptar");
-                        }
-                        catch (Exception ex)
-                        {
-                            await Application.Current.MainPage.DisplayAlert("ERROR", "La noticia no pudo ser guardada ", "Aceptar");
-
-                        }
-
-                    };
-                    verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_save_new);
-                }
-                verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_view_detail);
+                verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_view_detail_or_save);
 
 
                 var horizontalStack = new StackLayout()

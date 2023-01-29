@@ -62,15 +62,6 @@ namespace XamarinPrismTemplateForMac.Views
             Content = _listView;
         }
 
-        /*private async void listView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            // To prevent opening multiple pages on double tapping
-            _listView.IsEnabled = false;
-            var item = e.SelectedItem as RSSFeedObject;
-            await Navigation.PushAsync(new StreamDetailPage(item));
-
-            _listView.IsEnabled = true;
-        }*/
         #endregion Private Functions & Event Handlers
 
         #region LifeCycle Event Overrides
