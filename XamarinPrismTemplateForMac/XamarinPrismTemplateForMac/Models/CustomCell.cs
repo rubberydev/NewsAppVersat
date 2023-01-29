@@ -2,6 +2,7 @@
 using Prism.Navigation.Xaml;
 using Xamarin.Forms;
 using XamarinPrismTemplateForMac.DbModels;
+using XamarinPrismTemplateForMac.Helpers;
 using XamarinPrismTemplateForMac.Services;
 using XamarinPrismTemplateForMac.Views;
 
@@ -9,9 +10,14 @@ namespace XamarinPrismTemplateForMac.Models
 {
     public class CustomCell : ViewCell
     {
+        private SingletonGlobalVariables singletonGlobalVariables;
+
+        private bool isVisibleLegendToSaveNews;
         
         public CustomCell()
         {
+            this.singletonGlobalVariables = SingletonGlobalVariables.GetInstance();
+            this.isVisibleLegendToSaveNews = !singletonGlobalVariables.NavigatedFromSavedNewsOption;
             
             var youTubeFeed = new Label();
             youTubeFeed.LineBreakMode = LineBreakMode.WordWrap;
@@ -30,8 +36,8 @@ namespace XamarinPrismTemplateForMac.Models
             {
                 Text = "toca dos veces para verla despues...",
                 LineBreakMode = LineBreakMode.WordWrap,
-                FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label))
-
+                FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label)),
+                IsVisible = this.isVisibleLegendToSaveNews
             };
 
             verticalStack.Children.Add(label_action);
@@ -43,48 +49,52 @@ namespace XamarinPrismTemplateForMac.Models
                 RSSFeedObject bindingContext = (RSSFeedObject)rss_feed_object.BindingContext;
                 await Application.Current.MainPage.Navigation.PushAsync(new StreamDetailPage(bindingContext));
             };
-
-            var tapGestureRecognizer_to_save_new = new TapGestureRecognizer();
-            tapGestureRecognizer_to_save_new.NumberOfTapsRequired = 2;
             var image_channel = new Image()
             {
                 Source = "news_icon.jpeg",
                 HeightRequest = 50,
                 MinimumWidthRequest = 70
             };
-           
 
             
+            var tapGestureRecognizer_to_save_new = new TapGestureRecognizer();
+            //avoid double tap when user list local news
+            if (!singletonGlobalVariables.NavigatedFromSavedNewsOption)
+            {
+                tapGestureRecognizer_to_save_new.NumberOfTapsRequired = 2;
 
-            tapGestureRecognizer_to_save_new.Tapped += async (s, e) => {
-                // save news
 
-                var response = await Application.Current.MainPage.DisplayAlert("!!", "Esta seguro que quiere guardar esta noticia para verla despues?", "Si","No");
 
-                if (!response)return;
+                tapGestureRecognizer_to_save_new.Tapped += async (s, e) => {
+                    // save news
 
-                DbService dbService = new DbService();
-                var news_to_save = s as StackLayout;
-                RSSFeedObject rssFeedObject = (RSSFeedObject)news_to_save.BindingContext;
-                RSSNewsDbModel rss_feed_to_save = new RSSNewsDbModel();
-                rss_feed_to_save.Title = rssFeedObject.Title;
-                rss_feed_to_save.Date = rssFeedObject.Date;
-                rss_feed_to_save.Link = rssFeedObject.Link;
-                try
-                {
-                    await dbService.InsertNewsAsync(rss_feed_to_save);
-                    await Application.Current.MainPage.DisplayAlert("!!", "noticia guardada exitosamente", "Aceptar");
-                }
-                catch (Exception ex)
-                {
-                    await Application.Current.MainPage.DisplayAlert("ERROR", "La noticia no pudo ser guardada ", "Aceptar");
+                    var response = await Application.Current.MainPage.DisplayAlert("!!", "Esta seguro que quiere guardar esta noticia para verla despues?", "Si", "No");
 
-                }
+                    if (!response) return;
 
-            };
-            
+                    DbService dbService = new DbService();
+                    var news_to_save = s as StackLayout;
+                    RSSFeedObject rssFeedObject = (RSSFeedObject)news_to_save.BindingContext;
+                    RSSNewsDbModel rss_feed_to_save = new RSSNewsDbModel();
+                    rss_feed_to_save.Title = rssFeedObject.Title;
+                    rss_feed_to_save.Date = rssFeedObject.Date;
+                    rss_feed_to_save.Link = rssFeedObject.Link;
+                    try
+                    {
+                        await dbService.InsertNewsAsync(rss_feed_to_save);
+                        await Application.Current.MainPage.DisplayAlert("!!", "noticia guardada exitosamente", "Aceptar");
+                    }
+                    catch (Exception ex)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("ERROR", "La noticia no pudo ser guardada ", "Aceptar");
+
+                    }
+
+                };
+                verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_save_new);
+            }
             verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_view_detail);
-            verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_save_new);
+            
             
             var horizontalStack = new StackLayout()
             {

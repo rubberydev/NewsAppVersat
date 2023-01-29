@@ -83,7 +83,11 @@ namespace XamarinPrismTemplateForMac.Views
 
         protected override bool OnBackButtonPressed()
         {
-            Xamarin.Forms.Application.Current.MainPage.Navigation.PopToRootAsync();
+            Xamarin.Forms.Application.Current.MainPage = new Xamarin.Forms.NavigationPage(new MainPage())
+            {
+                BarTextColor = Color.FromRgb(255, 255, 255),
+                BarBackgroundColor = Color.FromRgb(255, 87, 51)
+            };
             return base.OnBackButtonPressed();
         }
     }

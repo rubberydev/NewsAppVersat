@@ -16,6 +16,8 @@ namespace XamarinPrismTemplateForMac.Droid
         {
             base.OnCreate(savedInstanceState);
 
+            Window.SetStatusBarColor(Android.Graphics.Color.Argb(255, 255, 87, 51));
+
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App(new AndroidInitializer()));

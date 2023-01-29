@@ -5,6 +5,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using XamarinPrismTemplateForMac.DbModels;
+using XamarinPrismTemplateForMac.Helpers;
 using XamarinPrismTemplateForMac.Models;
 using XamarinPrismTemplateForMac.Services;
 
@@ -15,6 +16,8 @@ namespace XamarinPrismTemplateForMac.Views
         #region Fields
         private DbService dbService;
 
+        SingletonGlobalVariables singletonGlobalVariables;
+
         bool _isThereSavedNews;
         Xamarin.Forms.ListView _listView = new Xamarin.Forms.ListView();
         List<RSSFeedObject> _feeds = new List<RSSFeedObject>();
@@ -23,6 +26,9 @@ namespace XamarinPrismTemplateForMac.Views
         #region Constructor
         public StreamPage(bool isThereSavedNews)
         {
+            this.singletonGlobalVariables = SingletonGlobalVariables.GetInstance();
+            this.singletonGlobalVariables.NavigatedFromSavedNewsOption = isThereSavedNews;
+
             Title = "CNN en Español...";
             // For iPhone X
             On<Xamarin.Forms.PlatformConfiguration.iOS>().SetUseSafeArea(true);

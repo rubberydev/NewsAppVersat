@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using Prism.Unity;
 using Xamarin.Forms;
+using XamarinPrismTemplateForMac.Helpers;
 using XamarinPrismTemplateForMac.Services;
 using XamarinPrismTemplateForMac.ViewModels;
 
@@ -17,7 +18,15 @@ namespace XamarinPrismTemplateForMac
         {
             InitializeComponent();
 
+             SingletonGlobalVariables.GetInstance();
+
              await NavigationService.NavigateAsync("NavigationPage/MainPage");
+
+            Xamarin.Forms.Application.Current.MainPage = new Xamarin.Forms.NavigationPage(new MainPage())
+            {
+                BarTextColor = Color.FromRgb(255, 255, 255),
+                BarBackgroundColor = Color.FromRgb(255, 87, 51)
+            };
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
