@@ -4,30 +4,30 @@ using CodeHollow.FeedReader;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using XamarinPrismTemplateForMac.DbModels;
+using XamarinPrismTemplateForMac.Helpers;
 using XamarinPrismTemplateForMac.Models;
+using XamarinPrismTemplateForMac.Services;
 
 namespace XamarinPrismTemplateForMac.Views
 {
     public class StreamPage : ContentPage
     {
         #region Fields
+        private DbService dbService;
+
+        bool _isThereSavedNews;
         Xamarin.Forms.ListView _listView = new Xamarin.Forms.ListView();
         List<RSSFeedObject> _feeds = new List<RSSFeedObject>();
         #endregion
 
         #region Constructor
-        public StreamPage()
+        public StreamPage(bool isThereSavedNews)
         {
             Title = "CNN en Español...";
-
             // For iPhone X
             On<Xamarin.Forms.PlatformConfiguration.iOS>().SetUseSafeArea(true);
-
-            _listView.ItemSelected += listView_ItemSelected;
-            _listView.SelectedItem = null;
-
-            
-
+            this._isThereSavedNews = isThereSavedNews;
             // Default values to display if the feeds aren't loading
             var label = new Label();
             var stack = new StackLayout()
@@ -74,51 +74,76 @@ namespace XamarinPrismTemplateForMac.Views
 
             base.OnAppearing();
 
-
-            var current = Connectivity.NetworkAccess;
-
-            if (current == NetworkAccess.Internet)
+            if (this._isThereSavedNews)
             {
-                var rssFeeds = new Feed();
-                try
+                DbService dbService = new DbService();
+
+                List<RSSNewsDbModel> rssNewsDbModel = await dbService.GetNewsAsync();
+                if (rssNewsDbModel.Count == 0)
                 {
-                    rssFeeds = await FeedReader.ReadAsync($"{Xamarin.Forms.Application.Current.Resources["UrlBase"].ToString()}{Xamarin.Forms.Application.Current.Resources["ChannelId"].ToString()}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    _feeds.Add(new RSSFeedObject() { Title = "Test", Date = "January 2099", Link = "www.example.com" });
-                    PopulateList();
+                    await Xamarin.Forms.Application.Current.MainPage.DisplayAlert("ERROR", "No tienes noticias guardadas", "Aceptar");
                     return;
                 }
-                foreach (var item in rssFeeds.Items)
+
+                foreach (var news in rssNewsDbModel)
                 {
-                    var feed = new RSSFeedObject()
-                    {
-                        Title = item.Title,
-                        Date = item.PublishingDate.Value.ToString("y"),
-                        Link = item.Link
-                    };
-                    _feeds.Add(feed);
+                    RSSFeedObject rssFeed = new RSSFeedObject();
+                    rssFeed.Title = news.Title;
+                    rssFeed.Date = news.Date;
+                    rssFeed.Link = news.Link;
+                    _feeds.Add(rssFeed);
+
                 }
                 PopulateList();
             }
             else
             {
-                var optionSelected = await Xamarin.Forms.Application.Current.MainPage.DisplayActionSheet("Error de red", "Recargar!", "Cancelar!", "Señor usuario si desea continuar habillite la conexion a internet y seleccione la acción Recargar!");
+                var current = Connectivity.NetworkAccess;
 
-                if (optionSelected == "Recargar!")
+                if (current == NetworkAccess.Internet)
                 {
-                    Xamarin.Forms.Application.Current.MainPage = new Xamarin.Forms.NavigationPage(new StreamPage())
+                    var rssFeeds = new Feed();
+                    try
                     {
-                        BarTextColor = Color.FromRgb(255, 255, 255),
-                        BarBackgroundColor = Color.FromRgb(255, 87, 51)
-                    };
+                        rssFeeds = await FeedReader.ReadAsync($"{Xamarin.Forms.Application.Current.Resources["UrlBase"].ToString()}{Xamarin.Forms.Application.Current.Resources["ChannelId"].ToString()}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        _feeds.Add(new RSSFeedObject() { Title = "Test", Date = "January 2099", Link = "www.example.com" });
+                        PopulateList();
+                        return;
+                    }
+                    foreach (var item in rssFeeds.Items)
+                    {
+                        var feed = new RSSFeedObject()
+                        {
+                            Title = item.Title,
+                            Date = item.PublishingDate.Value.ToString("y"),
+                            Link = item.Link
+                        };
+                        _feeds.Add(feed);
+                    }
+                    PopulateList();
                 }
-                else if (optionSelected == "Cancelar!" || string.IsNullOrEmpty(optionSelected))
-                    return;
+                else
+                {
+                    var optionSelected = await Xamarin.Forms.Application.Current.MainPage.DisplayActionSheet("Error de red", "Recargar!", "Cancelar!", "Señor usuario si desea continuar habillite la conexion a internet y seleccione la acción Recargar!");
 
+                    if (optionSelected == "Recargar!")
+                    {
+                        Xamarin.Forms.Application.Current.MainPage = new Xamarin.Forms.NavigationPage(new StreamPage(false))
+                        {
+                            BarTextColor = Color.FromRgb(255, 255, 255),
+                            BarBackgroundColor = Color.FromRgb(255, 87, 51)
+                        };
+                    }
+                    else if (optionSelected == "Cancelar!" || string.IsNullOrEmpty(optionSelected))
+                        return;
+
+                }
             }
+
         }
         #endregion LifeCycle Event Overrides
     }

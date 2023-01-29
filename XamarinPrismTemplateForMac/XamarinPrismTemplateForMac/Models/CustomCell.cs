@@ -25,6 +25,16 @@ namespace XamarinPrismTemplateForMac.Models
             var verticalStack = new StackLayout();
             verticalStack.Children.Add(youTubeFeed);
             verticalStack.Children.Add(youTubeFeed2);
+
+            var label_action = new Label()
+            {
+                Text = "toca dos veces para verla despues...",
+                LineBreakMode = LineBreakMode.WordWrap,
+                FontSize = Device.GetNamedSize(NamedSize.Micro, typeof(Label))
+
+            };
+
+            verticalStack.Children.Add(label_action);
             var tapGestureRecognizer_to_view_detail = new TapGestureRecognizer();
             tapGestureRecognizer_to_view_detail.NumberOfTapsRequired = 1;
             tapGestureRecognizer_to_view_detail.Tapped += async(s, e) =>
@@ -42,13 +52,14 @@ namespace XamarinPrismTemplateForMac.Models
                 HeightRequest = 50,
                 MinimumWidthRequest = 70
             };
+           
 
             
-            
+
             tapGestureRecognizer_to_save_new.Tapped += async (s, e) => {
                 // save news
 
-                var response = await Application.Current.MainPage.DisplayAlert("!!", "Esta seguro que quiere guardar esta noticia para leerla despues?", "Si","No");
+                var response = await Application.Current.MainPage.DisplayAlert("!!", "Esta seguro que quiere guardar esta noticia para verla despues?", "Si","No");
 
                 if (!response)return;
 
@@ -59,10 +70,19 @@ namespace XamarinPrismTemplateForMac.Models
                 rss_feed_to_save.Title = rssFeedObject.Title;
                 rss_feed_to_save.Date = rssFeedObject.Date;
                 rss_feed_to_save.Link = rssFeedObject.Link;
-                await dbService.InsertNewsAsync(rss_feed_to_save);
-                await Application.Current.MainPage.DisplayAlert("!!", "noticia guardada exitosamente", "Aceptar");
-            };
+                try
+                {
+                    await dbService.InsertNewsAsync(rss_feed_to_save);
+                    await Application.Current.MainPage.DisplayAlert("!!", "noticia guardada exitosamente", "Aceptar");
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current.MainPage.DisplayAlert("ERROR", "La noticia no pudo ser guardada ", "Aceptar");
 
+                }
+
+            };
+            
             verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_view_detail);
             verticalStack.GestureRecognizers.Add(tapGestureRecognizer_to_save_new);
             

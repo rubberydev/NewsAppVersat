@@ -1,6 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using XamarinPrismTemplateForMac.Helpers;
 using XamarinPrismTemplateForMac.Models;
 
 namespace XamarinPrismTemplateForMac.Views
@@ -9,8 +10,12 @@ namespace XamarinPrismTemplateForMac.Views
     {
         RSSFeedObject _rssFeedObject;
 
+        SingletonGlobalVariables singletonGlobalVariables;
+
+
         public StreamDetailPage(RSSFeedObject feedObject)
         {
+            Xamarin.Forms.NavigationPage.SetHasBackButton(this, false);
             Title = feedObject.Title;
             _rssFeedObject = feedObject;
             // For iPhone X
@@ -77,6 +82,12 @@ namespace XamarinPrismTemplateForMac.Views
                 Children = { webview, descriptionStack }
             };
             Content = pageStack;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            Xamarin.Forms.Application.Current.MainPage.Navigation.PopToRootAsync();
+            return base.OnBackButtonPressed();
         }
     }
 }

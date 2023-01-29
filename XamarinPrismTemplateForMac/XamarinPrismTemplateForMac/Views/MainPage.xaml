@@ -17,15 +17,16 @@
             Text="versat test in VS 2022 ;)"/>
         <Button
             Margin="35"
-            Text="listar rss news"
+            Text="listar noticias rss"
             TextColor="White"
             BackgroundColor="Blue"
             Command="{Binding ListRssNewsCommand}"/>
         <Button
             Margin="35"
-            Text="listar rss news guardadas"
+            Text="listar rss noticias guardadas"
             TextColor="White"
-            BackgroundColor="Red"/>
+            BackgroundColor="Red"
+            Command="{Binding ListLocalNewsCommand}"/>
 
     </StackLayout>
 </ContentPage>

@@ -138,6 +138,5 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\news_icon.jpeg" />
-    <BundleResource Include="Resources\save_icon.png" />
   </ItemGroup>
 </Project>
