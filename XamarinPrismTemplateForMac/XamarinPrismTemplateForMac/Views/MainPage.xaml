@@ -27,6 +27,12 @@
             TextColor="White"
             BackgroundColor="Red"
             Command="{Binding ListLocalNewsCommand}"/>
+        <Button
+            Margin="35"
+            Text="Borrar noticias guardadas"
+            TextColor="White"
+            BackgroundColor="LightBlue"
+            Command="{Binding ClearAllLocalNewsCommand}"/>
 
     </StackLayout>
 </ContentPage>

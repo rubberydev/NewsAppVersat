@@ -7,6 +7,7 @@ namespace XamarinPrismTemplateForMac.Services
 {
 	public interface IDbService
 	{
+        Task ClearAllNews();
         Task<List<RSSNewsDbModel>> GetNewsAsync();
         Task<int> InsertNewsAsync(RSSNewsDbModel item);
         Task<int> UpdateNewsAsync(RSSNewsDbModel item);

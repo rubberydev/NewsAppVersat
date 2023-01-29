@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SQLite;
+using Xamarin.Forms;
 using XamarinPrismTemplateForMac.DbModels;
 
 namespace XamarinPrismTemplateForMac.Services
@@ -43,7 +44,37 @@ namespace XamarinPrismTemplateForMac.Services
 
         public Task<int> DeleteNewsAsync(RSSNewsDbModel item) => database.DeleteAsync(item);
 
-       
+        public async Task ClearAllNews()
+        {
+            var allNewsInLocal = await this.GetNewsAsync();
+
+            if(allNewsInLocal.Count > 0)
+            {
+                foreach (var news in allNewsInLocal)
+                {
+                    try
+                    {
+                        await this.DeleteNewsAsync(news);
+                        await Application.Current.MainPage.DisplayAlert(":)", "noticia borrada exitosamente", "Aceptar!");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await Application.Current.MainPage.DisplayAlert(":(", $"No se pudo borrar una noticia ERROR: {ex.Message} consulte con el dev", "Aceptar");
+
+                    }
+
+                }
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert(":(", "No tienes noticias guardadas para borrar", "Aceptar");
+            }
+
+
+        }
+
+
         #endregion
     }
 }

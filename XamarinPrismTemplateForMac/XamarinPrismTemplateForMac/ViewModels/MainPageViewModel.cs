@@ -12,6 +12,12 @@ namespace XamarinPrismTemplateForMac.ViewModels
         private INavigationService _navigationService;
         private DelegateCommand _listRssNewsCommand;
         private DelegateCommand _listLocalNewsCommand;
+        private DelegateCommand _clearAllLocalNewsCommand;
+        private IDbService _dbService;
+
+        public DelegateCommand ClearAllLocalNewsCommand => _clearAllLocalNewsCommand ?? (_clearAllLocalNewsCommand = new DelegateCommand(ClearLocalNews));
+
+        private async void ClearLocalNews() => await this._dbService.ClearAllNews();
 
         public DelegateCommand ListLocalNewsCommand => _listLocalNewsCommand ?? (_listLocalNewsCommand = new DelegateCommand(ListLocalNews));
 
@@ -25,8 +31,10 @@ namespace XamarinPrismTemplateForMac.ViewModels
         
 
         public MainPageViewModel(
-            INavigationService navigationService) : base(navigationService)
+            INavigationService navigationService,
+            IDbService dbService) : base(navigationService)
         {
+            this._dbService = dbService;
             Title = "CNN en Español...";
             this._navigationService = navigationService;
             //this._navigationService.NavigateAsync(typeof())
