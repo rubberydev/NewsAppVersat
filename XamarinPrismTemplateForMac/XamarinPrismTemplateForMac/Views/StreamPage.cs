@@ -78,6 +78,8 @@ namespace XamarinPrismTemplateForMac.Views
                 if (rssNewsDbModel.Count == 0)
                 {
                     await Xamarin.Forms.Application.Current.MainPage.DisplayAlert("ERROR", "No tienes noticias guardadas", "Aceptar");
+                    if (Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.Count > 0)
+                        await Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
                     return;
                 }
 

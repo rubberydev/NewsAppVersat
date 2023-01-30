@@ -73,6 +73,8 @@ namespace XamarinPrismTemplateForMac.Services
             else
             {
                 await Application.Current.MainPage.DisplayAlert(":(", "No tienes noticias guardadas para borrar", "Aceptar");
+
+               
             }
 
 
