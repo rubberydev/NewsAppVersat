@@ -50,7 +50,7 @@ namespace XamarinPrismTemplateForMac.Services
 
             if(allNewsInLocal.Count > 0)
             {
-                bool isSureUser = await Application.Current.MainPage.DisplayAlert("??", $"esta seguro que desea borrar: {allNewsInLocal.Count} guardada(s) en local", "Si", "No");
+                bool isSureUser = await Application.Current.MainPage.DisplayAlert("??", $"esta seguro que desea borrar: {allNewsInLocal.Count} noticia(s) guardada(s) en local", "Si", "No");
 
                 if (!isSureUser) return;
 
